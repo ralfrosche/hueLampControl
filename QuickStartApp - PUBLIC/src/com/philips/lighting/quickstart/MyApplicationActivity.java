@@ -70,7 +70,7 @@ public class MyApplicationActivity extends Activity implements OnItemClickListen
     	List<PHLight> allLights = bridge.getResourceCache().getAllLights();
     	//List<PHLight> allLights =null;
     	
-    	 adapter = new LampListAdapter(getApplicationContext(), allLights);
+    	 adapter = new LampListAdapter(getApplicationContext(), allLights, bridge);
          
          ListView LampList = (ListView) findViewById(R.id.lamp_list);
          LampList.setOnItemClickListener(this);
@@ -81,10 +81,13 @@ public class MyApplicationActivity extends Activity implements OnItemClickListen
     
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+    	PHBridge bridge = phHueSDK.getSelectedBridge();
        	PHLight Light = (PHLight) adapter.getItem(position);
+       	PHLightState lightState = new PHLightState();
+        lightState.setHue(MAX_HUE);
+        bridge.updateLightState(Light, lightState, listener);
        	
-    	Toast.makeText(this, "Position: " + position, Toast.LENGTH_SHORT).show();
+    	//Toast.makeText(this, "Position: " + position, Toast.LENGTH_SHORT).show();
       
       
     

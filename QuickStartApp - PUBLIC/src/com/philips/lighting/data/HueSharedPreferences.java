@@ -1,15 +1,17 @@
 package com.philips.lighting.data;
 
+import java.util.List;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-
-import com.philips.lighting.hue.sdk.connection.impl.PHBridgeInternal;
 
 public class HueSharedPreferences {
     private static final String HUE_SHARED_PREFERENCES_STORE = "HueSharedPrefs";
     private static final String LAST_CONNECTED_USERNAME      = "LastConnectedUsername";
     private static final String LAST_CONNECTED_IP            = "LastConnectedIP";
+    private static final String LIGHTS            = "Lights";
+   // private  List<String> lightList = new ArrayList<String>();
     private static HueSharedPreferences instance = null;
     private SharedPreferences mSharedPreferences = null;
     
@@ -32,7 +34,10 @@ public class HueSharedPreferences {
         mSharedPreferencesEditor = mSharedPreferences.edit();
     }
     
-    
+    public String getLights() {
+        String lights = mSharedPreferences.getString(LIGHTS, "");
+   	 	return lights;
+	} 
     public String getUsername() {
          String username = mSharedPreferences.getString(LAST_CONNECTED_USERNAME, "");
     	 return username;
@@ -40,6 +45,19 @@ public class HueSharedPreferences {
 
 	public boolean setUsername(String username) {
         mSharedPreferencesEditor.putString(LAST_CONNECTED_USERNAME, username);
+        return (mSharedPreferencesEditor.commit());
+	}
+	
+	public boolean setLights(List<String> lightList) {
+		String light = "";
+		for (int i=0; i<lightList.size(); i++) {
+			light = light + "," + lightList.get(i);
+		}
+		for (String licht : lightList) {
+			
+		}
+		
+		mSharedPreferencesEditor.putString(LIGHTS, light);
         return (mSharedPreferencesEditor.commit());
 	}
     

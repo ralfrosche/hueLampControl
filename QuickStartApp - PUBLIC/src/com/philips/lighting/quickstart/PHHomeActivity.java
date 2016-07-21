@@ -181,12 +181,12 @@ public class PHHomeActivity extends Activity implements OnItemClickListener {
                 PHWizardAlertDialog.getInstance().closeProgressDialog();
             } 
             else if (code == PHHueError.BRIDGE_NOT_RESPONDING) {
-                Log.w(TAG, "Bridge Not Responding . . . ");
+                Log.w(TAG, "Basis antwortet nicht . . . ");
                 PHWizardAlertDialog.getInstance().closeProgressDialog();
                 PHHomeActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        PHWizardAlertDialog.showErrorDialog(PHHomeActivity.this, message, R.string.btn_ok);
+                        PHWizardAlertDialog.showErrorDialog(PHHomeActivity.this, "Basis antwortet nicht!", R.string.btn_ok);
                     }
                 }); 
 
@@ -205,7 +205,7 @@ public class PHHomeActivity extends Activity implements OnItemClickListener {
                     PHHomeActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            PHWizardAlertDialog.showErrorDialog(PHHomeActivity.this, message, R.string.btn_ok);
+                            PHWizardAlertDialog.showErrorDialog(PHHomeActivity.this, "Basis nicht gefunden!", R.string.btn_ok);
                         }
                     });  
                 }
