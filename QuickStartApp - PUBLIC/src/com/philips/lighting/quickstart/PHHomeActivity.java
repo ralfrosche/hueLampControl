@@ -51,7 +51,7 @@ public class PHHomeActivity extends Activity implements OnItemClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bridgelistlinear);
-        
+       // startMainActivity();
         // Gets an instance of the Hue SDK.
         phHueSDK = PHHueSDK.create();
         
