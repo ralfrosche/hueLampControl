@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linear2"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:minWidth="300dp"
     android:orientation="vertical"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
-    android:theme="@android:style/Theme.Dialog"
-    android:id="@+id/linear1"
-    android:minWidth="300dp" >
+    android:theme="@android:style/Theme.Dialog" >
 
     <ListView
-        android:id="@+id/lamp_list"
+        android:id="@+id/lamp_selection"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_marginLeft="2dip"

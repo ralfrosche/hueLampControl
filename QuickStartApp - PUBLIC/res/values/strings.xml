@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Hue QuickStart</string>
+    <string name="app_name">Monis Lampen</string>
     <string name="action_settings">Settings</string>
     <string name="no_bridge">Keine Basis gefunden.</string>
     <string name="btn_refresh">Refresh</string>
@@ -28,4 +28,7 @@
     <string name="txt_select_smartbridge">Basis auswählen</string>
     <string name="title_error">Fehler</string>
     <string name="txt_last_heartbeat">Last Heartbeat : </string>
+    <string name="allOff">Alle Lampen aus</string>
+    <string name="selectLamps">Lampen auswählen</string>
+    <string name="txt_selectlamps">Verfügbare Lampen</string>
 </resources>
