@@ -96,7 +96,14 @@ public class PHHomeActivity extends Activity implements OnItemClickListener {
         getMenuInflater().inflate(R.menu.home, menu);
         return true;
     }
+    
+   
 
+	private void launchHelp() {
+		Intent intent = new Intent(this, help.class);
+		startActivity(intent);
+	}
+	
 
     // Local SDK Listener
     private PHSDKListener listener = new PHSDKListener() {
@@ -235,6 +242,12 @@ public class PHHomeActivity extends Activity implements OnItemClickListener {
         case R.id.find_new_bridge:
             doBridgeSearch();
             break;
+        case R.id.help_main:
+   		 launchHelp();
+        case R.id.prefHome:
+ 		   Intent intent = new Intent(this, PreferencesActivity.class);
+ 			startActivity(intent);
+        	break;
         }
         return true;
     }
@@ -246,6 +259,7 @@ public class PHHomeActivity extends Activity implements OnItemClickListener {
         if (listener !=null) {
             phHueSDK.getNotificationManager().unregisterSDKListener(listener);
         }
+        Log.e(TAG,"onDestroyfrom Home");
        // phHueSDK.disableAllHeartbeat();
     }
         

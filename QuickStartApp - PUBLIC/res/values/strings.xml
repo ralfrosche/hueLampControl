@@ -31,4 +31,5 @@
     <string name="allOff">Alle Lampen aus</string>
     <string name="selectLamps">Lampen auswählen</string>
     <string name="txt_selectlamps">Verfügbare Lampen</string>
+    <string name="txt_selectscenes">Verfügbare Szenen</string>
 </resources>

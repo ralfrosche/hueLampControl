@@ -11,13 +11,19 @@ import org.json.JSONException;
 import android.annotation.SuppressLint;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.SeekBar;
+import android.widget.Switch;
 
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -32,41 +38,27 @@ import com.philips.lighting.quickstart.R;
  * 
  * @author SteveyO.
  */
-public class LampListAdapter extends BaseAdapter implements OnSeekBarChangeListener {
+public class LampListAdapter extends BaseAdapter implements OnSeekBarChangeListener, OnCheckedChangeListener{
     private static final String TAG = "QuickStart";
 	private LayoutInflater mInflater;
     private List<PHLight> allLights;
-   // private List<String[]> allLights;
     private PHBridge bridge;
     private List<Integer> aR = new ArrayList<Integer>(); 
     private List<Integer> PV = new ArrayList<Integer>(); 
-    /**
-     * View holder class for access point list.
-     * 
-     * @author SteveyO.
-     */
+
     class LampListItem {
         private TextView lampName;
         //private TextView lampId;
         private TextView lampType;
         private SeekBar seekBar;
+        private Switch switchPlug;
     }
-
-    /**
-     * creates instance of {@link LampListAdapter} class.
-     * 
-     * @param context           the Context object.
-     * @param accessPoints      an array list of {@link PHAccessPoint} object to display.
-     */
-        
+         
     public LampListAdapter(Context context, List<PHLight> allLights, PHBridge bridge) {
-   //	 public LampListAdapter(Context context, List<String[]> allLights, PHBridge bridge) {
-        // Cache the LayoutInflate to avoid asking for a new one each time.
         mInflater = LayoutInflater.from(context);
         this.allLights = allLights;
         this.bridge = bridge;
     }
-
 
     public View getView(final int position, View convertView, ViewGroup parent) {
 
@@ -75,36 +67,52 @@ public class LampListAdapter extends BaseAdapter implements OnSeekBarChangeListe
         	aR.add(position);
         	PV.add(0);
         }
-
+        
         if (convertView == null || aR.contains(position)){
-            convertView = mInflater.inflate(R.layout.lamp_item, null);
-            item = new LampListItem();
-            item.lampName = (TextView) convertView.findViewById(R.id.lamp_name);
-            //item.lampId = (TextView) convertView.findViewById(R.id.lamp_id);
-            item.lampType = (TextView) convertView.findViewById(R.id.lamp_type);
-            item.seekBar = (SeekBar) convertView.findViewById(R.id.seekBar1);
-            item.seekBar.setOnSeekBarChangeListener(this);
-           convertView.setTag(item);
-            
-           
+        	
+        	PHLight light = allLights.get(position);
+        	String modelNumber = light.getModelNumber();
+        	if (modelNumber.contains("Plug")){
+        		convertView = mInflater.inflate(R.layout.plug_item, null);
+                item = new LampListItem();
+                item.lampName = (TextView) convertView.findViewById(R.id.plug_name);
+                item.lampType = (TextView) convertView.findViewById(R.id.plug_type);
+                item.switchPlug = (Switch) convertView.findViewById(R.id.switchPlug);
+                item.switchPlug.setOnCheckedChangeListener(this);
+               convertView.setTag(item);
+        	
+        	} else {
+        		convertView = mInflater.inflate(R.layout.lamp_item, null);
+                item = new LampListItem();
+                item.lampName = (TextView) convertView.findViewById(R.id.lamp_name);
+                //item.lampId = (TextView) convertView.findViewById(R.id.lamp_id);
+                item.lampType = (TextView) convertView.findViewById(R.id.lamp_type);
+                item.seekBar = (SeekBar) convertView.findViewById(R.id.seekBar1);
+                item.seekBar.setOnSeekBarChangeListener(this);
+                convertView.setTag(item);
+        		
+        	}
+         
     }else{
         item = (LampListItem) convertView.getTag();
     }
-
-
        PHLight light = allLights.get(position);
        item.lampName.setTextColor(Color.BLACK);
        item.lampName.setText(light.getName());
        item.lampType.setTextColor(Color.DKGRAY);
        item.lampType.setText(light.getModelNumber());
-       item.seekBar.setId(position);
-       Log.e(TAG, "getViewBefore LigthState:"+position);
+   	   String modelNumber = light.getModelNumber();
+       if (modelNumber.contains("Plug")){
+    	   item.switchPlug.setId(position);
+       } else {
+    	   item.seekBar.setId(position);
+         }
        
        int brightness = 0;
        int localBrightness = PV.get(position);
        try {
     	   PHLightState lightState = new PHLightState();
-    	   lightState = allLights.get(position).getLastKnownLightState();
+    	   lightState = light.getLastKnownLightState();
     	   brightness = lightState.getBrightness();
            
        }
@@ -115,7 +123,34 @@ public class LampListAdapter extends BaseAdapter implements OnSeekBarChangeListe
     	   brightness = localBrightness;
        }
        Log.e(TAG, "getViewsetBrigthness:"+brightness);
-       item.seekBar.setProgress(brightness);
+       if (modelNumber.contains("Plug")){
+    	   // item.switchPlug.setChecked(false);
+    	   // TODO: restore state of Plug type lamps  
+    	   
+       } else {
+           item.seekBar.setProgress(brightness);
+       }
+
+       try{
+    	   PHLightState lightStateOld = new PHLightState();
+    	   modelNumber = light.getModelNumber();
+
+	  		if (!modelNumber.contains("Plug")){
+	  			if (brightness >=10){
+	  				lightStateOld.setOn(true);
+	  				lightStateOld.setBrightness(brightness);
+	    	    } else {
+	    	    	lightStateOld.setOn(false);
+	    	    	lightStateOld.setBrightness(0);
+	    	   }
+		    	bridge.updateLightState(light, lightStateOld);
+	  		}
+
+       }
+       catch(Exception e){
+    	   e.printStackTrace();
+    	   
+       }
        return convertView;
     }
     @Override
@@ -166,6 +201,28 @@ public class LampListAdapter extends BaseAdapter implements OnSeekBarChangeListe
         this.allLights = allLights;
         notifyDataSetChanged();
     }
+
+
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		int id = buttonView.getId();
+		Log.e(TAG, "Plug: "+isChecked + " id:" +id);
+		PHLight light = allLights.get(id);
+	    PHLightState lightState = new PHLightState();
+	    if (isChecked == true) {
+	        // lightState.setBrightness(254);
+	    	lightState.setOn(true);
+	    	Log.e(TAG, "Plug: " + id + " turn on");
+
+ 	    } else {
+	       // lightState.setBrightness(0);
+		    lightState.setOn(false);
+		    Log.e(TAG, "Plug: " + id + " turn off");
+
+	    }
+        bridge.updateLightState(light, lightState);
+		
+	}
     
     
 	/*
